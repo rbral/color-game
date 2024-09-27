@@ -1,12 +1,9 @@
 package com.example.dsii_pa_01_game;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 
@@ -17,14 +14,23 @@ import static javafx.scene.paint.Color.rgb;
 
 
 public class HelloController {
-    @FXML
-    private Label welcomeText;
+    /*@FXML
+    private Label welcomeText;*/
 
     @FXML
     private Button startButton;
 
     @FXML
     private Pane colorPane;
+
+    @FXML
+    private Label pointsTitleLabel;
+
+    @FXML
+    private Label pointsLabel;
+
+    @FXML
+    private Pane buttonPane;
 
     //private final Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.PINK};
 
@@ -35,7 +41,7 @@ public class HelloController {
     @FXML
     protected void onStartButtonClick()
     {
-        welcomeText.setText("Welcome to JavaFX Application!\nAre we having fun yet?");
+        //welcomeText.setText("Welcome to JavaFX Application!\nAre we having fun yet?");
         startButton.setVisible(false);
         startColorPane();
     }
@@ -43,12 +49,14 @@ public class HelloController {
     private void startColorPane()
     {
         colorPane.setVisible(true);
+        pointsTitleLabel.setVisible(true);
+        pointsLabel.setVisible(true);
         // Set an initial random color immediately
         String initialColor = colors[random.nextInt(colors.length)];
         colorPane.setStyle("-fx-background-color: " + initialColor + ";");
 
         // change color every 5 seconds:
-        timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
             String randomColor = colors[random.nextInt(colors.length)];
             colorPane.setStyle("-fx-background-color: " + randomColor + ";");
             startColorButtons();
@@ -73,20 +81,33 @@ public class HelloController {
 
         String randomColor = colors[random.nextInt(colors.length)];
         colorButton.setStyle("-fx-background-color: " + randomColor + ";");
+        colorButton.setPrefWidth(100);
+        colorButton.setPrefHeight(40);
+        //int points = random.nextInt(1, 3);
+        //colorButton.setText(String.valueOf(points));
 
-        int points = random.nextInt(1, 3);
-        colorButton.setText(String.valueOf(points));
-
-        // random position: make sure does not go out of bounds:
-        double xPos = random.nextDouble() * colorPane.getScene().getWidth() - 50;
-        // make underneath color pane:
-        double yPos = colorPane.getHeight() + random.nextDouble() *
-                (colorPane.getScene().getHeight() - colorPane.getHeight() - 50);
-
+        // random position in buttonContainer
+        double xPos = random.nextDouble() * (buttonPane.getWidth() - 50);
+        double yPos = random.nextDouble() * (buttonPane.getHeight() - 50);
         colorButton.setLayoutX(xPos);
         colorButton.setLayoutY(yPos);
 
-        colorButton.setVisible(true);
+        buttonPane.getChildren().add(colorButton);
+
+        // timer and points for each button:
+        double displayTime = random.nextDouble(1.5, 3.0);
+        int points = (int) Math.floor(displayTime);
+        colorButton.setText(String.valueOf(points));
+
+        Timeline buttonTimer = new Timeline(new KeyFrame(Duration.seconds(displayTime), event -> {
+            buttonPane.getChildren().remove(colorButton);
+        }));
+        buttonTimer.setCycleCount(1);
+        buttonTimer.play();
+
+
+
+        //colorButton.setVisible(true);
     }
 }
 
